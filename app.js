@@ -11,6 +11,10 @@ const app = express();
 //Possibilitar acesso ao req.body
 app.use(express.urlencoded({ extended: true }));
 
+//Method override
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
+
 app.use(express.static('public'));
 
 //Const com o path do app
@@ -22,19 +26,25 @@ app.set('views', path.join(__dirname, 'views'));
 //Definimos o framework usado ejs
 app.set('view engine', 'ejs');
 
-//===============================================================
-//Carrega o arquivo /views/cadastro/new.ejs onde está o formulário
+
+
 app.get('/cadastros/new', (req, res) => {
     res.render('cadastros/new');
 });
-//O formulário está enviando os dados para a rota /cadastros que é esta aqui
-//onde temos acesso aos dados enviados
-//para app.post depende necessariamente da linha app.use(express.urlencoded({ extended: true }));
-app.post('/cadastros', (req, res) => {
-    //depende do urlencoded para visualizar os dados do req.body
+
+app.post('/cadastros', (req, res) => { 
     console.log(req.body);
 });
-//===============================================================
+
+
+app.get('/cadastros/delete', (req, res) => {
+    res.render('cadastros/delete');
+});
+
+app.delete('/cadastros', (req, res) => {
+    res.send('Você clicou em delete');
+});
+
 
 app.listen(port, () => {
     console.log(`Serving on port ${port}`);
