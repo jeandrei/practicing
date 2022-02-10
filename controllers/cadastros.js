@@ -25,10 +25,16 @@ module.exports.cadastroDeletado = (req, res) => {
 };
 
 
-module.exports.listCadastros = async (req, res) => {    
-    const cadastros = await Cadastro.find({});     
-    res.render('cadastros/index', { cadastros });
-};
+module.exports.listCadastros = async (req, res, next) => {  
+    try{
+        const cadastros = await Cadastro.find({});        
+        cadastros.fly();      
+        res.render('cadastros/index', { cadastros });
+
+    } catch (e){
+        next(e);
+    }     
+}
 
 module.exports.detailCadastro = async (req, res) => {
     //pegamos o id do registro    
@@ -53,4 +59,10 @@ module.exports.updateCadastro = async (req, res) => {
     const { id } = req.params;
     const cadastro = await Cadastro.findByIdAndUpdate(id, req.body.cadastro, {runValidators: true, new: true });
     res.redirect(`/cadastros/${cadastro._id}`);
+}
+
+module.exports.deleteCadastro = async (req, res) => {
+    const { id } = req.params;
+    const deleteCadastro = await Cadastro.findByIdAndDelete(id);
+    res.redirect('/cadastros');
 }

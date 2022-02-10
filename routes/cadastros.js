@@ -4,7 +4,10 @@ const router = express.Router();
 
 const cadastros = require('../controllers/cadastros');
 
-router.get('/', cadastros.listCadastros);
+const { exemploMiddleware, verifyPassword } = require('../middleware');
+
+router.get('/', exemploMiddleware, cadastros.listCadastros);
+router.get('/secret', verifyPassword, cadastros.listCadastros);
 
 router.get('/new', cadastros.newCadastro);
 
@@ -20,6 +23,10 @@ router.get('/:id', cadastros.detailCadastro);
 router.get('/:id/edit', cadastros.editCadastro);
 
 router.put('/:id', cadastros.updateCadastro);
+
+router.delete('/:id', cadastros.deleteCadastro);
+
+
 
 
 
