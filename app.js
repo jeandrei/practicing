@@ -11,6 +11,9 @@ const app = express();
 //Possibilitar acesso ao req.body
 app.use(express.urlencoded({ extended: true }));
 
+//Mongoose
+const mongoose = require('mongoose');
+
 //Method override
 const methodOverride = require('method-override');
 app.use(methodOverride('_method'));
@@ -27,23 +30,24 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 
+const Cadastro = require('./models/cadastro');
 
-app.get('/cadastros/new', (req, res) => {
-    res.render('cadastros/new');
-});
-
-app.post('/cadastros', (req, res) => { 
-    console.log(req.body);
-});
+const cadastros = require('./routes/cadastros');
+app.use('/cadastros', cadastros);
 
 
-app.get('/cadastros/delete', (req, res) => {
-    res.render('cadastros/delete');
-});
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/cadastrodb';
 
-app.delete('/cadastros', (req, res) => {
-    res.send('Você clicou em delete');
-});
+mongoose.connect(dbUrl,{ 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true    
+ });
+ const db = mongoose.connection;
+ db.on("error", console.error.bind(console, "connection error:"));
+ db.once("open", () => {
+    console.log("Database connected");
+ });
+
 
 
 app.listen(port, () => {
